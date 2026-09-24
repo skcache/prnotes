@@ -212,7 +212,7 @@ Headings are a default, not a contract. Use only what reduces reviewer uncertain
 
 | Change | Add beyond "what changed" |
 |---|---|
-| Tiny fix / null guard | the exact condition and the path that no longer reaches it. No evidence section, no diagram. |
+| Tiny fix / null guard | the exact condition and the path that no longer reaches it. No diagram. If you ran the before and after, one result line beats prose. |
 | UI / interaction | before/after captures, or an explicit statement that they are unavailable |
 | Auth / event routing / state machine | the decision point; a diagram when there are two real paths |
 | Backend / performance / cache / systems | measured delta with conditions, or "not measured"; the invariant that makes it correct (ordering, keying, eviction, ownership); unchanged failure semantics |
