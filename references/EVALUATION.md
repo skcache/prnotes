@@ -36,7 +36,7 @@ These are the ways a PR note goes wrong. Each one is a scoring failure.
 | API behavior change | request/response delta, unchanged consumers, failure semantics | "endpoint updated" |
 | Backend performance | measured delta with conditions | an unmeasured claim |
 | Perf claim, no benchmark | what changed, "not measured", the reason it should help | numbers, a one-column table |
-| Cache / concurrency | the invariant that makes it correct — ordering, keying, eviction, ownership | a description of the code shape |
+| Cache / concurrency | the invariant that makes it correct (ordering, keying, eviction, ownership) | a description of the code shape |
 | Refactor | preserved contract, new boundary, equivalence evidence | invented before/after UX |
 | Migration | forward, rollback, existing rows, deploy ordering | "adds a column" |
 | Large multi-subsystem | reading order, mechanical vs decision-bearing, out of scope | one generic summary, one all-system diagram |
@@ -73,8 +73,7 @@ Expect:
 - no self-referential comment explaining how the note was written
 - no "docs-only means no screenshot" reasoning anywhere
 
-Penalize heavily when the output is correct but exhausting. A note that has to
-explain itself has already failed.
+Penalize heavily when the output is correct but exhausting.
 
 ## Rubric
 
