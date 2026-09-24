@@ -191,28 +191,7 @@ Each line names a path and the evidence behind it.
 
 Headings are a default, not a contract. Use only what reduces reviewer uncertainty, and rename or drop them as the change requires.
 
-```md
-## What changed
-
-<behavior delta>
-
-### Before / after
-
-<only if real evidence exists>
-
-### Flow
-
-<only if a diagram earns its place>
-
-### Implementation
-
-- <mechanism a reviewer must verify>
-- <invariant that could break>
-
-### Verification
-
-- [x] <path> — <evidence>
-```
+Default shape: `## What changed` → `### Before / after` (only with real evidence) → `### Flow` (only if a diagram earns it) → `### Implementation` → `### Verification`. Everything after the first section is optional.
 
 | Change | Add beyond "what changed" |
 |---|---|
