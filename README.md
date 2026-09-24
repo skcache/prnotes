@@ -1,22 +1,47 @@
-# PR Notes
+# prnotes
 
-**PR descriptions that explain the change before the reviewer opens the diff.**
+[![skills.sh](https://skills.sh/b/skcache/prnotes)](https://skills.sh/skcache/prnotes/pr-notes)
+[![OpenSkills](https://img.shields.io/badge/OpenSkills-compatible-black)](https://github.com/numman-ali/openskills)
+[![OpenClaw](https://img.shields.io/badge/OpenClaw-compatible-black)](https://docs.openclaw.ai/skills)
+[![MIT](https://img.shields.io/badge/license-MIT-black)](LICENSE)
 
-PR Notes is an Agent Skill for turning a code change into concise review context.
+**PR Notes**
 
-| | |
-|---|---|
-| **Change** | what was wrong and what happens now |
-| **Before / after** | visual or measurable evidence |
-| **Flow** | the changed path, when it is not obvious |
-| **Implementation** | only correctness-critical details |
-| **Verification** | checks tied to behavior and regressions |
+AI agents can write the code fast.
 
-## What it produces
+The reviewer still has to figure out what actually changed.
 
-### What changed
+`prnotes` turns a code change into a concise review note with:
 
-Clicking an MCP server row that required sign-in disabled the server. Row clicks now start sign-in while the switch still controls enabled state.
+- exact behavior delta
+- before / after evidence
+- a small flow diagram when the changed path is non-obvious
+- correctness-critical implementation details
+- verification and preserved behavior
+
+## How it works
+
+The agent inspects the actual diff and available evidence first.
+
+Then it writes the smallest PR note that makes the change obvious.
+
+A tiny fix stays tiny.
+
+An interaction change can get before / after evidence and a compact Mermaid flow.
+
+A performance change uses measured deltas.
+
+A refactor explains the preserved contract instead of inventing a fake UX story.
+
+Missing evidence stays missing.
+
+## Example
+
+```md
+## What changed
+
+Clicking an MCP server row that required sign-in disabled the server.
+Row clicks now start sign-in while the switch still controls enabled state.
 
 ### Before / after
 
@@ -25,6 +50,7 @@ Clicking an MCP server row that required sign-in disabled the server. Row clicks
 | Row click turns the server off | Row click opens sign-in and keeps it enabled |
 
 ### Flow
+```
 
 ```mermaid
 flowchart LR
@@ -33,6 +59,7 @@ flowchart LR
     B -- no --> D[Normal toggle]
 ```
 
+```md
 ### Implementation
 
 - Auth-required rows remain enabled while disconnected.
@@ -44,50 +71,60 @@ flowchart LR
 - [x] Auth-required row click starts sign-in.
 - [x] Direct switch click still toggles enabled state.
 - [x] Non-auth rows behave as before.
+```
 
-That is the whole idea: make the behavior delta obvious, show evidence, explain the branch if needed, and stop.
+## Install
+
+```bash
+npx skills add skcache/prnotes
+```
+
+For Codex:
+
+```bash
+npx skills add skcache/prnotes -a codex
+```
+
+For Claude Code:
+
+```bash
+npx skills add skcache/prnotes -a claude-code
+```
+
+For OpenSkills:
+
+```bash
+npx openskills install skcache/prnotes
+```
+
+The `skills` CLI supports multiple coding agents and installs skills directly from GitHub.
+
+## Update
+
+```bash
+npx skills update pr-notes
+```
 
 ## Use
 
-```bash
-git clone https://github.com/skcache/prnotes.git
-```
-
-Give your agent access to `SKILL.md`. For clients that support the Agent Skills format, place this folder in the client's skills directory and invoke **PR Notes** when writing or rewriting a pull request description.
-
-PR Notes adapts to the change. Tiny fixes do not get decorative diagrams. Refactors do not get fake before/after sections. Performance changes use measured deltas. Missing evidence stays missing.
-
-## Structure
+Inside a repository:
 
 ```text
-prnotes/
-├── SKILL.md
-├── AGENTS.md
-├── README.md
-├── LICENSE
-├── examples/
-├── evals/
-├── references/
-└── templates/
+Use the pr-notes skill.
+Inspect this change and write the PR description.
 ```
 
-`SKILL.md` is the skill. The other directories provide examples, evaluation cases, reference principles, and a reusable PR template.
+That's it.
 
-## Principles
+The diff stays precise.
 
-- behavior before implementation
-- evidence before prose
-- diagrams only when they clarify a real branch
-- preserved behavior stated explicitly
-- verification tied to the changed path
-- no invented screenshots, metrics, tests, or claims
-- delete anything that does not help review
+The PR becomes readable.
 
 ## Inspiration
 
-Inspired by a public PR-writing example shared by [Luke Parker](https://x.com/LukeParkerDev), especially the combination of concise behavior description, before/after evidence, and a compact control-flow diagram.
+Inspired by a public PR-writing example shared by [Luke Parker](https://x.com/LukeParkerDev), especially the combination of concise behavior description, before / after evidence, and a compact control-flow diagram.
 
-PR Notes generalizes that presentation pattern into a reusable Agent Skill.
+`prnotes` generalizes that presentation pattern into a reusable Agent Skill.
 
 ## License
 
