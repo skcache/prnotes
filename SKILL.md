@@ -1,51 +1,81 @@
 ---
 name: pr-notes
-description: Write or rewrite pull request descriptions as concise review notes. Use when a PR needs to explain the exact behavior delta, show before/after evidence, clarify non-obvious control flow with a small diagram, identify correctness-critical implementation details, preserve unaffected behavior, and document verification. Useful for UI fixes, auth or event flows, state machines, backend or infrastructure changes with measurable deltas, and behavior-preserving refactors.
+description: >-
+  Use when writing or rewriting a pull request description. Inspect the actual
+  code change and produce concise reviewer-facing notes that explain the exact
+  behavior delta, before/after evidence when useful, non-obvious control flow,
+  correctness-critical implementation details, preserved behavior, and
+  verification.
+license: MIT
+compatibility: Agent Skills compatible coding agents with repository read access. Works best with diff, test, issue, screenshot, log, or benchmark context. No external service required.
+metadata:
+  version: "0.1.0"
 ---
 
-# PR Notes
+# pr-notes — PR Notes
 
-Write for the reviewer, not the author.
+> Make the change obvious before the reviewer opens the diff.
 
-The goal is to compress the context needed to review a change without forcing the reviewer to reconstruct intent from the diff.
+You are writing for the reviewer, not narrating the author's work.
 
-Inspired by the PR presentation style shared publicly by Luke Parker (@LukeParkerDev): concise behavior description, before/after evidence, a small flow diagram when useful, and exact implementation notes.
+Your job is to compress the context needed to review a code change without forcing the reviewer to reconstruct intent from raw files and commits.
 
-## Reviewer contract
+A strong PR note answers:
 
-A strong PR note should make these clear quickly:
-
-1. What was wrong, missing, or intentionally changed?
-2. What happens now?
-3. Which path through the system changed?
-4. Which implementation details matter for correctness?
-5. Which nearby behaviors must remain unchanged?
-6. What evidence shows the change works?
+- what changed
+- what happened before
+- what happens now
+- which branch or path matters
+- what must remain unchanged
+- what evidence proves the change
 
 If a section does not reduce reviewer uncertainty, remove it.
 
-## Workflow
+## Resources
 
-### 1. Establish the actual change
+This skill is intentionally lean. Load details only when needed:
 
-When repository context is available, inspect the diff, changed files, tests, issue or ticket, screenshots, logs, metrics, and relevant comments before writing.
+- `references/PRINCIPLES.md` — review-writing principles and evidence rules.
+- `references/EXAMPLES.md` — representative UI, backend, and refactor examples.
+- `references/EVALUATION.md` — failure cases and a compact quality rubric.
 
-Prefer source evidence over a vague summary.
+---
+
+## 1. Inspect before writing
+
+When repository context is available, inspect the actual change before drafting.
+
+Prefer, when available:
+
+- diff
+- changed files
+- tests
+- issue or ticket
+- screenshots
+- logs
+- metrics or benchmarks
+- relevant PR comments
 
 Determine:
 
-- previous observable behavior
-- new observable behavior
-- changed decision point or data path
-- important invariants
-- likely regression surface
-- available evidence
+```text
+PREVIOUS BEHAVIOR
+NEW BEHAVIOR
+CHANGED PATH
+PRESERVED INVARIANTS
+REGRESSION SURFACE
+AVAILABLE EVIDENCE
+```
 
-Never invent screenshots, metrics, tests, edge cases, or implementation facts.
+Prefer source evidence over a vague summary.
 
-### 2. Open with the behavior delta
+Never invent screenshots, metrics, tests, implementation details, edge cases, or completed verification.
 
-State the previous behavior and the new behavior in one to three sentences.
+---
+
+## 2. Lead with the behavior delta
+
+Open with one to three sentences describing observable behavior.
 
 Good:
 
@@ -55,7 +85,7 @@ Weak:
 
 > Updates `server-panel.tsx` to modify click handling.
 
-Lead with behavior. Implementation comes later.
+The reviewer should understand why the diff exists before reading implementation details.
 
 Avoid vague language such as:
 
@@ -65,17 +95,19 @@ Avoid vague language such as:
 - makes this more robust
 - refactors behavior
 
-Replace it with the exact state transition, request path, user action, metric, or invariant.
+Replace it with the exact state transition, user action, request path, metric, or invariant.
 
-### 3. Add before / after evidence when there is a real delta
+---
+
+## 3. Use before / after evidence when it helps
 
 For visual behavior, prefer:
 
-1. matched before/after screenshots
+1. matched screenshots
 2. short GIFs
-3. concise textual behavior when media is unavailable
+3. concise textual behavior if media is unavailable
 
-For backend, systems, or infrastructure changes, prefer comparable measured evidence:
+For backend, systems, or infrastructure changes, prefer measured evidence:
 
 ```md
 | Metric | Before | After |
@@ -84,13 +116,15 @@ For backend, systems, or infrastructure changes, prefer comparable measured evid
 | cache hit rate | 71% | 93% |
 ```
 
-State the workload or measurement conditions when they matter.
+State workload or measurement conditions when they affect interpretation.
 
-Do not compare unrelated runs as if they were equivalent.
+Do not compare unrelated runs as though they are equivalent.
 
-For behavior-preserving refactors, skip the visual before/after section and state the preserved contract instead.
+For behavior-preserving refactors, do not fabricate a before/after UX section. State the preserved contract instead.
 
-### 4. Use a diagram only when it reduces review effort
+---
+
+## 4. Add a diagram only when it reduces review effort
 
 Use a small Mermaid diagram for non-obvious:
 
@@ -98,7 +132,7 @@ Use a small Mermaid diagram for non-obvious:
 - authentication
 - state transitions
 - request paths
-- retries and fallbacks
+- retry or fallback behavior
 - controller selection
 - data flow
 
@@ -109,16 +143,24 @@ Example:
 ```mermaid
 flowchart LR
     A[Row click] --> B{Needs auth?}
-    B -- yes --> C[Prevent toggle]
-    C --> D[Start OAuth]
-    B -- no --> E[Normal toggle]
+    B -- yes --> C[Start OAuth]
+    B -- no --> D[Normal toggle]
 ```
 
 Do not add a diagram when prose is faster.
 
-Avoid full dependency maps, decorative architecture diagrams, or diagrams that simply repeat the bullets.
+Avoid:
 
-### 5. Document only correctness-critical implementation details
+- decorative architecture diagrams
+- full dependency maps
+- giant state charts for small fixes
+- diagrams that merely repeat the bullets
+
+The diagram should expose the decision or sequence that matters.
+
+---
+
+## 5. Include only correctness-critical implementation details
 
 Implementation bullets should help the reviewer inspect the diff.
 
@@ -126,7 +168,7 @@ Strong:
 
 - `needs_auth` rows remain enabled and disconnected until authentication completes.
 - Row clicks ignore the switch control, preserving direct switch toggles.
-- The toggle hook starts OAuth instead of attempting a normal connection for auth-required rows.
+- The auth-required path starts OAuth instead of attempting a normal connection.
 
 Weak:
 
@@ -135,13 +177,17 @@ Weak:
 - Fixed state.
 - Changed types.
 
-Use exact components, functions, state names, services, or invariants when they make review easier. Do not dump a file list.
+Use exact components, functions, state names, services, or invariants only when they make review easier.
 
-### 6. Name preserved behavior
+Do not dump a file list.
 
-State important adjacent paths that must remain unchanged.
+---
 
-Examples:
+## 6. State preserved behavior
+
+Interaction changes often break adjacent paths.
+
+Call out important invariants explicitly:
 
 - Direct switch clicks still toggle enabled state.
 - Keyboard activation keeps the existing behavior.
@@ -151,16 +197,18 @@ Examples:
 
 This gives the reviewer an explicit regression checklist.
 
-### 7. Make verification prove the changed branch
+---
 
-Verification should map directly to the behavior delta and likely regressions.
+## 7. Verification must prove the changed path
+
+Map verification directly to the behavior delta and likely regressions.
 
 Strong:
 
-- [x] Clicking an auth-required row starts OAuth.
-- [x] Clicking the switch still toggles enabled state.
+- [x] Auth-required row click starts OAuth.
+- [x] Direct switch click still toggles enabled state.
 - [x] Non-auth rows retain the previous behavior.
-- [x] Browser or unit coverage exercises both click targets.
+- [x] Browser or unit coverage exercises both paths.
 
 Weak:
 
@@ -171,24 +219,24 @@ CI status is useful, but it does not replace behavior-specific evidence.
 
 Never mark a check complete unless the available context supports it. Leave unrun checks unchecked or label them pending.
 
-## Default shape
+---
 
-Use the smallest useful subset:
+## 8. Use the smallest useful shape
+
+Default:
 
 ```md
 ## What changed
 
-<1-3 sentences describing previous and new behavior>
+<previous behavior + new behavior>
 
 ### Before / after
 
-| Before | After |
-|---|---|
-| <evidence> | <evidence> |
+<visual or measurable evidence, only when useful>
 
 ### Flow
 
-<small Mermaid diagram only if useful>
+<small Mermaid diagram, only when useful>
 
 ### Implementation
 
@@ -198,44 +246,42 @@ Use the smallest useful subset:
 ### Verification
 
 - [x] <changed path>
-- [x] <edge case or regression path>
+- [x] <regression-sensitive path>
 ```
 
 Do not force every section into every PR.
 
-## Adapt by change type
-
 ### Tiny fix
 
-Usually use:
+Usually:
 
 - What changed
 - Implementation
 - Verification
 
-Skip the diagram and before/after section if they add no value.
+No diagram unless branching is genuinely unclear.
 
 ### UI, auth, state-machine, workflow, or controller change
 
-Usually use:
+Usually:
 
 - What changed
 - Before / after
-- Flow, when branching is non-obvious
+- Flow when useful
 - Implementation
 - Verification
 
 ### Backend, performance, or infrastructure change
 
-Prefer measured evidence. Include:
+Prefer:
 
-- workload or test conditions
-- relevant metric delta
+- measured before / after
+- test or workload conditions
 - changed request or data path when useful
 - preserved failure semantics
 - verification
 
-### Refactor with no intended behavior change
+### Behavior-preserving refactor
 
 Open with:
 
@@ -243,20 +289,20 @@ Open with:
 
 Then explain:
 
-- the previous structural problem
-- the new boundary
-- the preserved contract
-- tests or evidence supporting equivalence
-
-Do not invent a UX delta.
+- previous structural problem
+- new boundary
+- preserved contract
+- evidence supporting equivalence
 
 ### Large PR
 
 Group by reviewer-relevant behavior or subsystem.
 
-If the PR is too broad to explain concisely, say so rather than hiding the breadth behind a generic summary.
+Do not hide an unreviewable diff behind a tiny generic summary.
 
-## Style
+---
+
+## 9. Style
 
 - concise
 - technical
@@ -268,23 +314,26 @@ If the PR is too broad to explain concisely, say so rather than hiding the bread
 - no generic conclusion
 - no commit-history narration
 - no exhaustive file-by-file summary
-- no filler such as "This PR aims to..."
 - no unsupported claims
+- no filler such as "This PR aims to..."
 
 Stop when the reviewer has enough information to verify the change.
 
-## Final pass
+---
 
-Before returning a PR note, verify:
+## 10. Final check
 
-- the opening states the behavior delta
-- the change is understandable before reading the full diff
-- before/after evidence is real and comparable
-- the diagram, if present, explains a meaningful branch or sequence
-- implementation bullets expose the mechanism that matters
-- important preserved behavior is explicit
-- verification covers the changed path and likely regressions
-- unsupported claims are removed
-- redundant prose is deleted
+Before returning a PR note:
 
-For extended examples and evaluation cases, see `examples/`, `references/`, and `evals/`.
+```text
+BEHAVIOR DELTA CLEAR?
+EVIDENCE REAL AND COMPARABLE?
+DIAGRAM ACTUALLY USEFUL?
+IMPLEMENTATION DETAILS SELECTIVE?
+PRESERVED BEHAVIOR EXPLICIT?
+VERIFICATION SPECIFIC?
+UNSUPPORTED CLAIMS REMOVED?
+ANYTHING LEFT TO DELETE?
+```
+
+If the last answer is yes, delete it.
