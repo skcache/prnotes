@@ -2,35 +2,21 @@
 
 **PR descriptions that explain the change before the reviewer opens the diff.**
 
-PR Notes is an Agent Skill for writing concise, review-ready pull request descriptions.
-
-It focuses on five things:
+PR Notes is an Agent Skill for turning a code change into concise review context.
 
 | | |
 |---|---|
 | **Change** | what was wrong and what happens now |
 | **Before / after** | visual or measurable evidence |
-| **Flow** | a small diagram when the changed path is non-obvious |
-| **Implementation** | only the details that matter for correctness |
-| **Verification** | checks mapped to the changed behavior and likely regressions |
+| **Flow** | the changed path, when it is not obvious |
+| **Implementation** | only correctness-critical details |
+| **Verification** | checks tied to behavior and regressions |
 
-```mermaid
-flowchart LR
-    A[Behavior delta] --> B[Before / after]
-    B --> C{Flow unclear?}
-    C -- yes --> D[Small diagram]
-    C -- no --> E[Implementation]
-    D --> E
-    E --> F[Verification]
-```
+## What it produces
 
-## Example
+### What changed
 
-```md
-## What changed
-
-Clicking an MCP server row that required sign-in disabled the server.
-Row clicks now start sign-in while the switch still controls enabled state.
+Clicking an MCP server row that required sign-in disabled the server. Row clicks now start sign-in while the switch still controls enabled state.
 
 ### Before / after
 
@@ -58,19 +44,18 @@ flowchart LR
 - [x] Auth-required row click starts sign-in.
 - [x] Direct switch click still toggles enabled state.
 - [x] Non-auth rows behave as before.
-```
+
+That is the whole idea: make the behavior delta obvious, show evidence, explain the branch if needed, and stop.
 
 ## Use
-
-Clone the repository and give your agent access to `SKILL.md`.
 
 ```bash
 git clone https://github.com/skcache/prnotes.git
 ```
 
-For clients that support the Agent Skills format, place this folder in the client's skills directory and invoke **PR Notes** when writing or rewriting a pull request description.
+Give your agent access to `SKILL.md`. For clients that support the Agent Skills format, place this folder in the client's skills directory and invoke **PR Notes** when writing or rewriting a pull request description.
 
-The skill is intentionally adaptive. Tiny fixes do not get decorative diagrams. Refactors do not get fake before/after sections. Performance changes use measured deltas. Missing evidence stays missing.
+PR Notes adapts to the change. Tiny fixes do not get decorative diagrams. Refactors do not get fake before/after sections. Performance changes use measured deltas. Missing evidence stays missing.
 
 ## Structure
 
@@ -85,6 +70,18 @@ prnotes/
 ├── references/
 └── templates/
 ```
+
+`SKILL.md` is the skill. The other directories provide examples, evaluation cases, reference principles, and a reusable PR template.
+
+## Principles
+
+- behavior before implementation
+- evidence before prose
+- diagrams only when they clarify a real branch
+- preserved behavior stated explicitly
+- verification tied to the changed path
+- no invented screenshots, metrics, tests, or claims
+- delete anything that does not help review
 
 ## Inspiration
 
