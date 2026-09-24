@@ -14,22 +14,22 @@ The reviewer still has to figure out what actually changed.
 `prnotes` turns a code change into a concise review note with:
 
 - exact behavior delta
-- before / after evidence
+- before / after evidence — captured screenshots for anything visual, measured numbers for anything measured
 - a small flow diagram when the changed path is non-obvious
 - correctness-critical implementation details
-- verification and preserved behavior
+- preserved behavior and verification tied to the changed path
 
 ## How it works
 
-The agent inspects the actual diff and available evidence first.
+The agent reads the actual diff and the available evidence first.
 
-Then it writes the smallest PR note that makes the change obvious.
+Then it writes the smallest note that makes the change obvious.
 
 A tiny fix stays tiny.
 
-An interaction change can get before / after evidence and a compact Mermaid flow.
+A UI change gets matched before / after captures, cropped to the region that moved.
 
-A performance change uses measured deltas.
+A performance change uses measured deltas, or says it was not measured.
 
 A refactor explains the preserved contract instead of inventing a fake UX story.
 
@@ -37,7 +37,7 @@ Missing evidence stays missing.
 
 ## Example
 
-```md
+````md
 ## What changed
 
 Clicking an MCP server row that required sign-in disabled the server.
@@ -47,10 +47,9 @@ Row clicks now start sign-in while the switch still controls enabled state.
 
 | Before | After |
 |---|---|
-| Row click turns the server off | Row click opens sign-in and keeps it enabled |
+| ![before](before.png) | ![after](after.png) |
 
 ### Flow
-```
 
 ```mermaid
 flowchart LR
@@ -59,19 +58,19 @@ flowchart LR
     B -- no --> D[Normal toggle]
 ```
 
-```md
 ### Implementation
 
-- Auth-required rows remain enabled while disconnected.
+- Auth-required rows stay enabled and disconnected until authentication completes.
 - Direct switch clicks keep the existing toggle behavior.
-- Non-auth rows are unchanged.
 
 ### Verification
 
-- [x] Auth-required row click starts sign-in.
-- [x] Direct switch click still toggles enabled state.
-- [x] Non-auth rows behave as before.
-```
+- [x] Auth-required row click starts sign-in — manual run, captured above
+- [x] Direct switch click still toggles enabled state — `toggle.test.ts`
+- [ ] Keyboard activation — not run
+````
+
+Captures are written to a gitignored `.pr-notes/` directory and stay out of the diff.
 
 ## Install
 
@@ -91,19 +90,27 @@ For Claude Code:
 npx skills add skcache/prnotes -a claude-code
 ```
 
+For OpenClaw:
+
+```bash
+openclaw skills install skills-sh:skcache/prnotes/pr-notes
+```
+
 For OpenSkills:
 
 ```bash
 npx openskills install skcache/prnotes
 ```
 
-The `skills` CLI supports multiple coding agents and installs skills directly from GitHub.
+The `skills` CLI supports a bunch of coding agents and installs skills directly from GitHub.
 
 ## Update
 
 ```bash
 npx skills update pr-notes
 ```
+
+`metadata.version` in `SKILL.md` is for human release tracking; the CLI finds updates from the source repo, not this field.
 
 ## Use
 
