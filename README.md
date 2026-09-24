@@ -14,7 +14,7 @@ The reviewer still has to figure out what actually changed.
 `prnotes` turns a code change into a concise review note with:
 
 - exact behavior delta
-- before / after evidence — captured screenshots for anything visual, measured numbers for anything measured
+- before / after evidence: captured screenshots for anything visual, measured numbers for anything measured
 - a small flow diagram when the changed path is non-obvious
 - correctness-critical implementation details
 - preserved behavior and verification tied to the changed path
@@ -31,7 +31,7 @@ A UI change gets matched before / after captures, cropped to the region that mov
 
 A performance change uses measured deltas, or says it was not measured.
 
-A refactor explains the preserved contract instead of inventing a fake UX story.
+A refactor explains the preserved contract.
 
 Missing evidence stays missing.
 
@@ -65,9 +65,9 @@ flowchart LR
 
 ### Verification
 
-- [x] Auth-required row click starts sign-in — manual run, captured above
-- [x] Direct switch click still toggles enabled state — `toggle.test.ts`
-- [ ] Keyboard activation — not run
+- [x] Auth-required row click starts sign-in (manual run, captured above)
+- [x] Direct switch click still toggles enabled state (`toggle.test.ts`)
+- [ ] Keyboard activation (not run)
 ````
 
 Captures are written to a gitignored `.pr-notes/` directory and stay out of the diff.
@@ -121,17 +121,11 @@ Use the pr-notes skill.
 Inspect this change and write the PR description.
 ```
 
-That's it.
-
-The diff stays precise.
-
-The PR becomes readable.
-
 ## Inspiration
 
-Inspired by a public PR-writing example shared by [Luke Parker](https://x.com/LukeParkerDev), especially the combination of concise behavior description, before / after evidence, and a compact control-flow diagram.
+Inspired by a PR-writing example from [Luke Parker](https://x.com/LukeParkerDev): a short behavior description, before / after evidence, and a compact flow diagram.
 
-`prnotes` generalizes that presentation pattern into a reusable Agent Skill.
+`prnotes` generalizes that pattern into a reusable Agent Skill.
 
 ## License
 
