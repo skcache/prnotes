@@ -43,10 +43,12 @@ Same rule, different mechanism: the renderer is the app.
 
 1. Render the base revision and the branch revision from the same source region.
 2. Use the real product wherever you can — the deployed docs site, the running app, GitHub's own rendering.
-3. If the real renderer cannot be driven — GitHub's client-side diagram enrichment does not run under headless capture, for example — use a renderer that closely reproduces it: GitHub-flavored Markdown plus the product's own stylesheet.
+3. Only if the real renderer genuinely cannot be driven — a site behind auth, a build you cannot run — fall back to a renderer that closely reproduces it: the product's markdown flavour plus its own stylesheet.
 4. Hold viewport width, theme, and the cropped region identical between the pair. Same origin, same width, same theme; only the content changes.
 
-State the limitation once, plainly, under the images: "Rendered with a GitHub-flavored Markdown renderer; GitHub's own diagram enrichment does not run headless." Passing a reproduction off as the product is not honest.
+Before concluding that a renderer failed, check for **cross-origin iframes**. GitHub draws Mermaid inside a `viewscreen.githubusercontent.com` frame, so querying the main document finds no diagram and looks like a broken renderer when the diagram is fine. Query every frame, not just the top document.
+
+State a limitation only once you have confirmed it. A limitation you assumed is a false claim in the note.
 
 ## Framing
 
