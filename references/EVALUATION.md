@@ -20,6 +20,9 @@ These are the ways a PR note goes wrong. Each one is a scoring failure.
 | Hidden failure | failing tests or unrun CI presented as green |
 | Bloat | the note takes longer to read than the diff |
 | Diff blindness | a note written from an issue title when the diff was never read |
+| Meta-commentary | the note explaining its own structure, or a PR comment explaining how the note was written |
+| Forensic report | documenting the investigation instead of the change |
+| Prose over pixels | a paragraph describing a visual difference that a capture would settle in one look |
 
 ## Cases
 
@@ -41,10 +44,37 @@ These are the ways a PR note goes wrong. Each one is a scoring failure.
 | Issue disagrees with diff | the disagreement stated explicitly | silently following either one |
 | Security-sensitive | trust boundary, what is newly possible, what is not covered | vague reliability language |
 | Dependency bump | version, reason, security relevance, behavior risk | a changelog restatement |
-| Docs only | what a reader now learns | a diagram or evidence section |
+| Docs, text only | what a reader now learns | a diagram |
+| README / rendered output | classified as visual; before/after captures of the rendered result; a one-line delta | a table about markdown mechanics, an essay about the fix, "docs-only so no screenshot" |
 | Generated code | generator, changed input, regenerate command, hand-written source | line-by-line narration of generated files |
 | Diff not accessible | say what could not be inspected, ask or stop | reconstructing the change from the issue title |
 | Failing tests / CI not run | the failure named, CI status stated honestly | implying a green run |
+
+## Regression case: rendered-output change
+
+The case that catches "technically correct, visually exhausting".
+
+Facts:
+
+- a README example renders incorrectly on GitHub
+- the fix changes README source only
+- the visible result is dramatically different
+- both revisions can be rendered
+
+Expect:
+
+- classified as **visually observable**, not "docs-only"
+- before/after captures of the rendered region, same width and theme, cropped tight
+- a one-to-two sentence behavior delta
+- at most two implementation bullets
+- at most three short verification bullets
+- the whole body scannable in under 15 seconds
+- no table about markdown mechanics
+- no self-referential comment explaining how the note was written
+- no "docs-only means no screenshot" reasoning anywhere
+
+Penalize heavily when the output is correct but exhausting. A note that has to
+explain itself has already failed.
 
 ## Rubric
 
@@ -59,4 +89,4 @@ Score 0-2 on:
 7. factual restraint
 8. conciseness
 
-Maximum: **16**. A fabricated fact caps the total at 8.
+Maximum: **16**. A fabricated fact caps the total at 8. A note a reviewer cannot scan in 15 seconds caps it at 10.
