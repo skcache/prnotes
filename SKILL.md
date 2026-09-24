@@ -79,7 +79,11 @@ Evidence counts only when it is real, current, and comparable.
 
 ### Visual changes
 
-For any user-visible change — UI, interaction, layout, rendering, navigation, auth flow, anything demonstrable on screen — before/after screenshots are a first-class verification artifact, not decoration.
+Ask one question: **can the changed behavior be seen?**
+
+Not "is this application code". A README, an MDX page, a docs site, a stylesheet, a rendered table, a diagram, a code block, a page outline — all as visible as a button. If the change alters what someone looks at, it is a visual change and it gets a capture.
+
+For any visual change, before/after screenshots are a first-class verification artifact, not decoration. A visual change shipped without a capture is an unfinished note.
 
 Capture them actively:
 
@@ -95,7 +99,7 @@ Store captures under `.pr-notes/screenshots/` as `before-<short-name>.png` and `
 
 If the old state cannot be reproduced, do not fabricate a BEFORE image. Say it is unavailable and describe the old behavior in text.
 
-Do not force screenshots for backend-only, refactor-only, docs-only, or otherwise non-visual changes. Full protocol: `references/VISUAL-EVIDENCE.md`.
+Do not force screenshots for backend-only, refactor-only, or otherwise invisible changes. Documentation is not exempt by default: if the file is rendered anywhere, capture it. Full protocol: `references/VISUAL-EVIDENCE.md`.
 
 ### Measured changes
 
@@ -213,13 +217,13 @@ Headings are a default, not a contract. Use only what reduces reviewer uncertain
 | Change | Add beyond "what changed" |
 |---|---|
 | Tiny fix / null guard | the exact condition and the path that no longer reaches it. No diagram. If you ran the before and after, one result line beats prose. |
-| UI / interaction | before/after captures, or an explicit statement that they are unavailable |
+| UI / interaction / rendered output | before/after captures, or an explicit statement that they are unavailable |
 | Auth / event routing / state machine | the decision point; a diagram when there are two real paths |
 | Backend / performance / cache / systems | measured delta with conditions, or "not measured"; the invariant that makes it correct (ordering, keying, eviction, ownership); unchanged failure semantics |
 | Behavior-preserving refactor | the structural problem removed, the new boundary, the preserved contract, equivalence evidence |
 | Schema or data migration | forward and rollback direction, what happens to existing rows, whether it is safe to run before or after the code deploy |
 | Dependency bump / generated code | version and reason, or generator, changed input, and regenerate command. Do not narrate generated lines. |
-| Documentation only | what a reader now learns that they could not before. No diagram, no evidence section. |
+| Docs or prose, text only | what a reader now learns. No diagram. If the file is rendered anywhere — README, docs site, MDX, HTML — use the rendered-output row above instead. |
 | Security-sensitive | the trust boundary that moved, what is newly possible, what is explicitly not covered |
 | Large multi-subsystem | review order, what is mechanical vs what needs thought, shared invariants stated once, what is out of scope |
 
@@ -229,11 +233,15 @@ Do not hide an unreviewable diff behind a generic summary. Do not pad a small ch
 
 ## 9. Style and budget
 
+A reviewer should understand the note in under 15 seconds. If they need longer, cut until they don't.
+
 - concise, technical, literal
 - short paragraphs, no section that exists only to look complete
 - exact terminology from the code, not synonyms
 - no marketing language, no fake excitement, no closing summary, no filler such as "This PR aims to..."
 - no commit-by-commit narration, no file-by-file walkthrough
+- no commentary about the note itself: never explain why a section is present, why a checkbox is open, or how the note was assembled
+- when an image can replace prose, keep the image and delete the prose
 
 Typical note: 5-20 lines of content. A tiny fix is 3-5. A large multi-subsystem PR earns more, but only in the form of review order and invariants. If the note takes longer to read than the diff, cut it.
 
@@ -249,6 +257,8 @@ DIAGRAM EARNS ITS PLACE?
 IMPLEMENTATION BULLETS REVIEW-RELEVANT?
 PRESERVED BEHAVIOR EXPLICIT?
 VERIFICATION NAMES A PATH AND ITS EVIDENCE?
+READABLE IN 15 SECONDS?
+ANY COMMENTARY ABOUT THE NOTE ITSELF?
 ANYTHING UNSUPPORTED OR UNNEEDED LEFT?
 ```
 
