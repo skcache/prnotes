@@ -37,19 +37,20 @@ Missing evidence stays missing.
 
 ## Example
 
-````md
-## What changed
+A PR note as it renders on GitHub:
+
+### What changed
 
 Clicking an MCP server row that required sign-in disabled the server.
 Row clicks now start sign-in while the switch still controls enabled state.
 
-### Before / after
+#### Before / after
 
 | Before | After |
 |---|---|
-| ![before](before.png) | ![after](after.png) |
+| `![before](.pr-notes/screenshots/before-row-click.png)` | `![after](.pr-notes/screenshots/after-row-click.png)` |
 
-### Flow
+#### Flow
 
 ```mermaid
 flowchart LR
@@ -58,17 +59,16 @@ flowchart LR
     B -- no --> D[Normal toggle]
 ```
 
-### Implementation
+#### Implementation
 
 - Auth-required rows stay enabled and disconnected until authentication completes.
 - Direct switch clicks keep the existing toggle behavior.
 
-### Verification
+#### Verification
 
 - [x] Auth-required row click starts sign-in — manual run, captured above
 - [x] Direct switch click still toggles enabled state — `toggle.test.ts`
 - [ ] Keyboard activation — not run
-````
 
 Captures are written to a gitignored `.pr-notes/` directory and stay out of the diff.
 
