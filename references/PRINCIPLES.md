@@ -1,80 +1,88 @@
 # PR Notes principles
 
-## A PR description is a review interface
+## The PR description is a review interface
 
-A diff is precise about code. It is often poor at communicating intent.
+A diff is precise about code and poor at communicating intent. A reviewer still has to work out why the change exists, which path it changes, and what must not move.
 
-The reviewer still has to infer:
-
-- why the change exists
-- what behavior changed
-- which branch matters
-- what must remain unchanged
-- what evidence supports correctness
-
-PR Notes provides that missing context.
+PR Notes supplies that context and nothing else. It is not a release note, a changelog, a commit summary, or an architecture document.
 
 ## Compression, not narration
 
-The objective is useful compression.
+Prefer the smallest set of facts that gives the reviewer a correct mental model. One matched before/after pair, one small diagram, and two invariants often carry more than four paragraphs.
 
-Prefer the smallest set of facts that gives the reviewer the correct mental model.
-
-Screenshots, metrics, a tiny flow diagram, and explicit invariants often carry more information than paragraphs of prose.
+Test every line: does this reduce the reviewer's uncertainty about this change? If not, delete it.
 
 ## Evidence hierarchy
 
-Prefer, when applicable:
+Prefer, in order:
 
-1. observable before / after evidence
-2. tests exercising the changed path
+1. before/after visual or measured evidence from the actual change
+2. tests that exercise the changed path
 3. a small control-flow diagram
-4. correctness-critical implementation details
+4. correctness-critical implementation detail
 5. logs or metrics for operational behavior
 
-Do not add evidence merely to make the PR look substantial.
+Do not add evidence to make the PR look substantial.
 
-## Diagrams explain decisions
+## Observed vs inferred
 
-A diagram earns its place when branching or sequencing is clearer visually than in prose.
+Keep what you saw separate from what you concluded.
 
-Good candidates:
+- Observed: a command you ran, a test output, a file you read, an image you captured.
+- Inferred: a conclusion drawn from reading the code.
 
-- one interaction can take two paths
-- auth behavior depends on state
-- controller selection changes behavior
-- requests retry or fall back
-- data moves through a non-obvious sequence
+Inference is allowed and often necessary. Unlabelled inference presented as fact is not.
 
-Bad candidates:
+## When evidence is missing or weak
 
-- one-line guards
-- obvious renames
-- flat file changes
-- diagrams that repeat the bullets
+| Situation | Do |
+|---|---|
+| Not measured | say "not measured" and describe the change; no delta table |
+| Measured under different conditions | report both runs with their conditions, or omit the comparison |
+| Screenshots predate the change | omit them, or state that they are stale |
+| Tests fail | say which ones fail and why the change still stands; never present a failing suite as verification |
+| CI has not run | write "CI not run" |
+| Coverage is partial | say which paths are covered and which are not |
+| Old state cannot be reproduced | describe the old behavior in text; never fabricate a before image |
 
-## Invariants are review targets
+A concise incomplete truth beats a polished fabricated PR.
 
-Useful PR notes name behavior that should not move.
+## Hard cases
 
-Examples:
+### Security-sensitive changes
 
-- switch clicks still toggle
-- keyboard activation remains intact
-- cache eviction semantics are unchanged
-- timeout ownership stays with the caller
-- API response shape is unchanged
+Any change to authentication, authorization, sessions, tokens, secrets, uploads, or trust boundaries must state:
 
-This turns hidden regression risk into an explicit review target.
+- which trust boundary moved
+- what is newly possible for an actor who could not do it before
+- what is explicitly not covered
 
-## Factual restraint
+Never describe a security change in vague UX terms such as "improves sign-in reliability". Name the check that was added, moved, or removed.
 
-Do not upgrade a hypothesis into a result.
+### Schema and data migrations
 
-If performance was not measured, do not claim it improved.
+State the forward direction, the rollback direction, what happens to existing rows, and whether the migration is safe to run before or after the code deploy. Note any lock, backfill, or downtime implication. "Adds a column" is not enough.
 
-If a test was not run, do not check the box.
+### Large multi-subsystem PRs
 
-If a screenshot does not exist, do not describe one as evidence.
+Give the reviewer a reading order instead of more prose:
 
-A concise incomplete truth is better than a polished fabricated PR.
+- what to review first, and why
+- which parts are mechanical (renames, generated output, formatting) and can be skimmed
+- which parts carry the real decision
+- shared invariants stated once, not repeated per file
+- what is deliberately out of scope
+
+At most one diagram per subsystem. Never one diagram spanning unrelated subsystems.
+
+### Behavior-preserving refactors
+
+State that no behavior change is intended, in the first sentence. Then give the structural problem, the new boundary, the preserved contract, and the evidence for equivalence. Do not fabricate a before/after UX story.
+
+### Generated code
+
+Do not narrate generated files. State the generator, what changed in its input, and the command that regenerates the output. Point the reviewer at the hand-written source that produced it.
+
+### Dependency bumps
+
+State the version change, the reason, whether it is a security fix, and what could shift in behavior. If the lockfile is the only substantive change, say so.
