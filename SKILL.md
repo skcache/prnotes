@@ -235,7 +235,7 @@ Do not hide an unreviewable diff behind a generic summary. Do not pad a small ch
 - no marketing language, no fake excitement, no closing summary, no filler such as "This PR aims to..."
 - no commit-by-commit narration, no file-by-file walkthrough
 
-Typical note: 5-20 lines. A tiny fix is 3-5. If the note takes longer to read than the diff, cut it.
+Typical note: 5-20 lines of content. A tiny fix is 3-5. If the note takes longer to read than the diff, cut it.
 
 ---
 
