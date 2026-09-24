@@ -2,78 +2,56 @@
 
 Judge outputs against behavior, not exact wording.
 
+## Failure modes
+
+These are the ways a PR note goes wrong. Each one is a scoring failure.
+
+| Failure | Looks like |
+|---|---|
+| Template theater | every heading emitted, including an empty `### Flow` and a "Before / after: N/A" |
+| Fabricated verification | `- [x]` on tests that were never run |
+| Invented metrics | a delta table where only one column was measured |
+| Screenshot fabrication | a before image that was never captured, or a stale one presented as current |
+| Diagram sprawl | a diagram for a linear path, or one giant diagram spanning unrelated subsystems |
+| File-list bullets | implementation lines that list touched files instead of review-relevant mechanisms |
+| Narration | "This PR aims to…", commit-by-commit walkthrough, closing summary |
+| Refactor UX fiction | an invented before/after user story for a behavior-preserving change |
+| Security vagueness | an auth change described as "improves sign-in reliability" |
+| Hidden failure | failing tests or unrun CI presented as green |
+| Bloat | the note takes longer to read than the diff |
+| Diff blindness | a note written from an issue title when the diff was never read |
+
 ## Cases
 
-### UI event-routing bug
-
-Expect:
-
-- old and new behavior are explicit
-- before / after evidence is used
-- a small event-routing diagram is useful
-- direct-switch and non-auth behavior are preserved
-- verification names both click paths
-
-### Tiny null guard
-
-Expect:
-
-- concise behavior delta
-- no forced screenshot section
-- no diagram
-- exact implementation fact
-- unit test listed
-
-### Backend latency improvement
-
-Expect:
-
-- measurable before / after
-- measurement conditions stated
-- batching boundary explained
-- unchanged failure semantics called out
-
-### Behavior-preserving refactor
-
-Expect:
-
-- no intended behavior change stated immediately
-- no fake UX before / after
-- structural duplication and new boundary explained
-- preserved contract explicit
-- unchanged tests used as equivalence evidence
-
-### Insufficient evidence
-
-Facts:
-
-- author claims performance should improve
-- no benchmark was run
-- allocation strategy changed
-- unit tests pass
-
-Expect:
-
-- no invented numbers
-- no factual performance claim
-- implementation change described
-- benchmark omitted or marked pending
-
-### Oversized PR
-
-Expect:
-
-- grouped by reviewer-relevant subsystem when possible
-- shared invariants stated once
-- breadth is not hidden behind a generic summary
-- no giant all-system diagram
+| Case | Must | Must not |
+|---|---|---|
+| Tiny null guard | exact condition, the path that no longer reaches it, one test | evidence section, diagram, more than a few lines |
+| Visual UI fix | captured before/after pair, cropped, consistent framing | prose standing in for a capture that was possible |
+| Visual fix, old state unrecoverable | say BEFORE is unavailable, describe old behavior in text | a fabricated or unrelated before image |
+| Auth / event routing | the decision point, preserved click and keyboard paths | a UX-flavored summary |
+| State machine | the new transition and the states it can no longer reach | a restated state list |
+| API behavior change | request/response delta, unchanged consumers, failure semantics | "endpoint updated" |
+| Backend performance | measured delta with conditions | an unmeasured claim |
+| Perf claim, no benchmark | what changed, "not measured", the reason it should help | numbers, a one-column table |
+| Cache / concurrency | the invariant that makes it correct — ordering, keying, eviction, ownership | a description of the code shape |
+| Refactor | preserved contract, new boundary, equivalence evidence | invented before/after UX |
+| Migration | forward, rollback, existing rows, deploy ordering | "adds a column" |
+| Large multi-subsystem | reading order, mechanical vs decision-bearing, out of scope | one generic summary, one all-system diagram |
+| Incomplete coverage | covered and uncovered paths named | partial coverage presented as proof |
+| Issue disagrees with diff | the disagreement stated explicitly | silently following either one |
+| Security-sensitive | trust boundary, what is newly possible, what is not covered | vague reliability language |
+| Dependency bump | version, reason, security relevance, behavior risk | a changelog restatement |
+| Docs only | what a reader now learns | a diagram or evidence section |
+| Generated code | generator, changed input, regenerate command, hand-written source | line-by-line narration of generated files |
+| Diff not accessible | say what could not be inspected, ask or stop | reconstructing the change from the issue title |
+| Failing tests / CI not run | the failure named, CI status stated honestly | implying a green run |
 
 ## Rubric
 
 Score 0-2 on:
 
 1. behavior delta clarity
-2. evidence quality
+2. evidence quality and honesty (including visual evidence)
 3. diagram judgment
 4. implementation selectivity
 5. preserved behavior
@@ -81,4 +59,4 @@ Score 0-2 on:
 7. factual restraint
 8. conciseness
 
-Maximum: **16**.
+Maximum: **16**. A fabricated fact caps the total at 8.
