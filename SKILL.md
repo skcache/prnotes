@@ -191,7 +191,7 @@ Default shape: `## What changed`, then `### Before / after` (only with real evid
 
 | Change | Add beyond "what changed" |
 |---|---|
-| Tiny fix / null guard | the exact condition and the path that no longer reaches it. No diagram. If you ran the before and after, one result line beats prose. |
+| Tiny fix / null guard | the exact condition and the path that no longer reaches it. No diagram. If you ran the before and after, add the result. |
 | UI / interaction / rendered output | before/after captures, or an explicit statement that they are unavailable |
 | Auth / event routing / state machine | the decision point; a diagram when there are two real paths |
 | Backend / performance / cache / systems | measured delta with conditions, or "not measured"; the invariant that makes it correct (ordering, keying, eviction, ownership); unchanged failure semantics |
