@@ -16,24 +16,22 @@ metadata:
   version: "0.2.0"
 ---
 
-# pr-notes — PR Notes
+# pr-notes
 
-> Make the change obvious before the reviewer opens the diff.
+Turns a code change into a review note: what moved, what proves it, what must not move.
 
-You write for the reviewer, not for the author's changelog.
+Aim for a reviewer who reads the note once and opens the diff already knowing where to look.
 
-Examples in this file and its references show judgment, not wording. Never lift a sentence from an example into a real note.
-
-A PR description is a review interface. Its job is to compress the context needed to review a change: what moved, what proves it, what must not move. Target a reviewer who reads your note once, then opens the diff already knowing where to look.
+Examples here and in the references are illustrations. Never copy a sentence from one into a real note.
 
 ## Resources
 
-Load details only when needed:
+Load these only when needed:
 
-- `references/PRINCIPLES.md` — evidence rules, restraint, and hard cases (security, migrations, large PRs, generated code).
-- `references/VISUAL-EVIDENCE.md` — before/after screenshot capture protocol.
-- `references/EXAMPLES.md` — shape references. Their details are invented; never reuse their facts.
-- `references/EVALUATION.md` — failure modes and a compact rubric.
+- `references/PRINCIPLES.md`: evidence rules, restraint, hard cases (security, migrations, large PRs, generated code).
+- `references/VISUAL-EVIDENCE.md`: before/after screenshot capture.
+- `references/EXAMPLES.md`: shape references. Their details are invented.
+- `references/EVALUATION.md`: failure modes and a rubric.
 
 ---
 
@@ -50,9 +48,9 @@ REGRESSION SURFACE
 EVIDENCE AVAILABLE
 ```
 
-- The diff is the source of truth for what changed. The issue is the source of truth for intent. If they disagree, say so in the note instead of silently picking one.
+- The diff is the source of truth for what changed. The issue is the source of truth for intent. If they disagree, say so in the note.
 - If you cannot read the diff, say which parts you could not inspect. Do not reconstruct a change from an issue title, a commit message, or a list of file names.
-- Label anything you inferred rather than observed: `inferred: the caller already retries, so only the first failure reaches this path` is honest. An unlabelled guess is not.
+- Label what you inferred: `inferred: the caller already retries, so only the first failure reaches this path`. An unlabelled guess is not acceptable.
 - Never invent screenshots, metrics, tests, implementation details, edge cases, or completed verification.
 
 ---
@@ -67,9 +65,9 @@ Weak:
 
 > Updates `cache.ts` to fix a bug in the lookup path.
 
-If the change has no user-visible behavior delta, say that plainly in the first sentence and name the class (refactor, dependency, docs, generated code, internal infrastructure).
+If there is no user-visible behavior delta, say that in the first sentence and name the class: refactor, dependency, docs, generated code, internal infrastructure.
 
-Avoid vague language — improves UX, fixes logic, handles edge cases, more robust, refactors behavior. Replace it with the exact state transition, request path, metric, or invariant.
+Cut vague language: improves UX, fixes logic, handles edge cases, more robust, refactors behavior. Use the exact state transition, request path, metric, or invariant.
 
 ---
 
@@ -79,13 +77,11 @@ Evidence counts only when it is real, current, and comparable.
 
 ### Visual changes
 
-Ask one question: **can the changed behavior be seen?**
+Ask one question: can the changed behavior be seen?
 
-Not "is this application code". A README, an MDX page, a docs site, a stylesheet, a rendered table, a diagram, a code block, a page outline — all as visible as a button. If the change alters what someone looks at, it is a visual change and it gets a capture.
+A README, an MDX page, a docs site, a stylesheet, a rendered table, a diagram, a code block, and a page outline are all as visible as a button. If the change alters what someone looks at, it is a visual change and it needs a capture.
 
-For any visual change, before/after screenshots are a first-class verification artifact, not decoration. A visual change shipped without a capture is an unfinished note.
-
-Capture them actively:
+Capture order:
 
 1. reproduce the old behavior before the change (base branch, `git stash`, previous build, deployed version)
 2. capture BEFORE
@@ -93,17 +89,17 @@ Capture them actively:
 4. reproduce the identical scenario
 5. capture AFTER
 
-Hold viewport, zoom, theme, and app state constant between the pair, then crop tightly around the region that changed. A 40px state change does not need a full-page shot. Prefer a side-by-side comparison in the note.
+Hold viewport, zoom, theme, and app state constant between the pair, then crop to the region that changed. A 40px state change does not need a full-page shot. Put the pair side by side in the note.
 
-Store captures under `.pr-notes/screenshots/` as `before-<short-name>.png` and `after-<short-name>.png`, and add the exact root entry `/.pr-notes/` to `.gitignore` unless the user explicitly wants the images committed. Local copies stay untracked; attach or upload the selected images through the normal PR workflow when the note needs hosted URLs.
+Store captures under `.pr-notes/screenshots/` as `before-<short-name>.png` and `after-<short-name>.png`, and add the exact root entry `/.pr-notes/` to `.gitignore` unless the user wants the images committed. Local copies stay untracked. Attach or upload the selected images through the normal PR workflow when the note needs hosted URLs.
 
-If the old state cannot be reproduced, do not fabricate a BEFORE image. Say it is unavailable and describe the old behavior in text.
+If the old state cannot be reproduced, say the BEFORE image is unavailable and describe the old behavior in text. Do not fabricate one.
 
-Do not force screenshots for backend-only, refactor-only, or otherwise invisible changes. Documentation is not exempt by default: if the file is rendered anywhere, capture it. Full protocol: `references/VISUAL-EVIDENCE.md`.
+Do not force captures for backend-only, refactor-only, or otherwise invisible changes. Documentation is not exempt: if the file is rendered anywhere, capture it. Full protocol: `references/VISUAL-EVIDENCE.md`.
 
 ### Measured changes
 
-For performance, latency, throughput, or resource changes, use numbers you actually measured:
+For performance, latency, throughput, or resource changes, use numbers you measured:
 
 | Metric | Before | After |
 |---|---:|---:|
@@ -111,7 +107,7 @@ For performance, latency, throughput, or resource changes, use numbers you actua
 
 State the workload, hardware, and build mode when they affect interpretation. Do not present runs from different conditions as a before/after pair.
 
-If you did not measure it, write what changed and say the impact is unmeasured. Do not print a delta table with one real column, and do not upgrade "should be faster" into a result.
+If you did not measure it, say the impact is unmeasured. Do not print a delta table with one real column, and do not turn "should be faster" into a result.
 
 Never use screenshots, logs, or metrics that predate the change as if they were captured after it.
 
@@ -119,7 +115,7 @@ Never use screenshots, logs, or metrics that predate the change as if they were 
 
 ## 4. Add a diagram only when prose would be slower
 
-A diagram earns its place when the changed path has a decision point or sequence that is genuinely hard to hold in your head from prose.
+Draw one when the changed path has a decision point or sequence that is hard to hold in your head from prose.
 
 ```mermaid
 flowchart LR
@@ -128,18 +124,18 @@ flowchart LR
     B -- no --> D[Normal toggle]
 ```
 
-- 3-7 nodes.
-- At most one diagram per behavior group. Never one diagram spanning unrelated subsystems.
+- 3 to 7 nodes.
+- At most one diagram per behavior group. Never one spanning unrelated subsystems.
 - If you can state the path in one sentence, do not draw it.
-- Never a decorative architecture diagram, a full dependency map, or a diagram that restates the bullets.
+- No decorative architecture diagrams, dependency maps, or diagrams that restate the bullets.
 
-The diagram should expose the decision that matters, not the file layout.
+Show the decision that matters, not the file layout.
 
 ---
 
 ## 5. Implementation details: only what a reviewer must verify
 
-Each bullet must pass one test: **would a reviewer be unable to confirm this change is correct without this line?**
+Each bullet has to pass one test: would a reviewer be unable to confirm this change is correct without this line?
 
 Keep mechanisms, boundaries, and invariants. Delete narration.
 
@@ -165,7 +161,7 @@ Name the adjacent paths a reviewer should spot-check:
 - Existing API response shape is unchanged.
 - Failure handling stays on the previous path.
 
-This is the regression checklist. Keep it to invariants that could plausibly break, not every property of the system.
+This is the regression checklist. Keep it to invariants that could plausibly break.
 
 ---
 
@@ -174,15 +170,15 @@ This is the regression checklist. Keep it to invariants that could plausibly bre
 Each line names a path and the evidence behind it.
 
 ```md
-- [x] Auth-required row click starts sign-in — manual run in the app, captured above
-- [x] Direct switch click still toggles — `toggle.test.ts`, unchanged
-- [ ] Timeout path — not run; no harness for it yet
+- [x] Auth-required row click starts sign-in (manual run, captured above)
+- [x] Direct switch click still toggles (`toggle.test.ts`, unchanged)
+- [ ] Timeout path (not run, no harness yet)
 ```
 
-- A checked box requires a result you actually observed. If you did not run it, leave it unchecked and write why.
+- A checked box requires a result you observed. If you did not run it, leave it unchecked and write why.
 - If tests fail, say which ones fail and why the change still stands.
 - If CI has not run, write "CI not run". Never imply a green run.
-- State which paths are covered and which are not. Partial coverage is not proof of the whole path.
+- Say which paths are covered and which are not. Partial coverage is not proof of the whole path.
 - "Tested locally" and "CI passes" are not evidence. Name the test, command, or manual step.
 
 ---
@@ -191,7 +187,7 @@ Each line names a path and the evidence behind it.
 
 Headings are a default, not a contract. Use only what reduces reviewer uncertainty, and rename or drop them as the change requires.
 
-Default shape: `## What changed` → `### Before / after` (only with real evidence) → `### Flow` (only if a diagram earns it) → `### Implementation` → `### Verification`. Everything after the first section is optional.
+Default shape: `## What changed`, then `### Before / after` (only with real evidence), `### Flow` (only if a diagram helps), `### Implementation`, `### Verification`. Everything after the first section is optional.
 
 | Change | Add beyond "what changed" |
 |---|---|
@@ -202,7 +198,7 @@ Default shape: `## What changed` → `### Before / after` (only with real eviden
 | Behavior-preserving refactor | the structural problem removed, the new boundary, the preserved contract, equivalence evidence |
 | Schema or data migration | forward and rollback direction, what happens to existing rows, whether it is safe to run before or after the code deploy |
 | Dependency bump / generated code | version and reason, or generator, changed input, and regenerate command. Do not narrate generated lines. |
-| Docs or prose, text only | what a reader now learns. No diagram. If the file is rendered anywhere — README, docs site, MDX, HTML — use the rendered-output row above instead. |
+| Docs or prose, text only | what a reader now learns. No diagram. If the file is rendered anywhere (README, docs site, MDX, HTML), use the rendered-output row above. |
 | Security-sensitive | the trust boundary that moved, what is newly possible, what is explicitly not covered |
 | Large multi-subsystem | review order, what is mechanical vs what needs thought, shared invariants stated once, what is out of scope |
 
@@ -212,17 +208,17 @@ Do not hide an unreviewable diff behind a generic summary. Do not pad a small ch
 
 ## 9. Style and budget
 
-A reviewer should understand the note in under 15 seconds. If they need longer, cut until they don't.
+A reviewer should understand the note in under 15 seconds.
 
 - concise, technical, literal
 - short paragraphs, no section that exists only to look complete
 - exact terminology from the code, not synonyms
-- no marketing language, no fake excitement, no closing summary, no filler such as "This PR aims to..."
+- no marketing language, no closing summary, no filler such as "This PR aims to..."
 - no commit-by-commit narration, no file-by-file walkthrough
-- no commentary about the note itself: never explain why a section is present, why a checkbox is open, or how the note was assembled
-- when an image can replace prose, keep the image and delete the prose
+- no commentary about the note itself. Never explain why a section is present, why a checkbox is open, or how the note was assembled.
+- if an image shows the change, delete the sentence that describes it
 
-Typical note: 5-20 lines of content. A tiny fix is 3-5. A large multi-subsystem PR earns more, but only in the form of review order and invariants. If the note takes longer to read than the diff, cut it.
+Typical note: 5 to 20 lines of content. A tiny fix is 3 to 5. A large multi-subsystem PR earns more, but only as review order and invariants. If the note takes longer to read than the diff, cut it.
 
 ---
 
@@ -232,7 +228,7 @@ Typical note: 5-20 lines of content. A tiny fix is 3-5. A large multi-subsystem 
 BEHAVIOR DELTA CLEAR?
 EVIDENCE REAL, CURRENT, COMPARABLE?
 VISUAL CHANGE HAS CAPTURES OR AN HONEST "UNAVAILABLE"?
-DIAGRAM EARNS ITS PLACE?
+IS THE DIAGRAM USEFUL?
 IMPLEMENTATION BULLETS REVIEW-RELEVANT?
 PRESERVED BEHAVIOR EXPLICIT?
 VERIFICATION NAMES A PATH AND ITS EVIDENCE?
