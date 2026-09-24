@@ -2,29 +2,31 @@
 
 ## A PR description is a review interface
 
-A diff tells the reviewer exactly what changed in code. It does not reliably explain:
+A diff is precise about code. It is often poor at communicating intent.
+
+The reviewer still has to infer:
 
 - why the change exists
 - what behavior changed
-- which branch is important
+- which branch matters
 - what must remain unchanged
 - what evidence supports correctness
 
-PR Notes fills that gap.
+PR Notes provides that missing context.
 
 ## Compression, not narration
 
-The objective is not completeness. It is useful compression.
+The objective is useful compression.
 
-Prefer the smallest set of facts that lets a reviewer build the correct mental model.
+Prefer the smallest set of facts that gives the reviewer the correct mental model.
 
-A strong note often contains less text than a weak one because screenshots, metrics, a tiny flow diagram, and precise invariants carry more information than prose.
+Screenshots, metrics, a tiny flow diagram, and explicit invariants often carry more information than paragraphs of prose.
 
 ## Evidence hierarchy
 
 Prefer, when applicable:
 
-1. observable before/after evidence
+1. observable before / after evidence
 2. tests exercising the changed path
 3. a small control-flow diagram
 4. correctness-critical implementation details
@@ -34,26 +36,26 @@ Do not add evidence merely to make the PR look substantial.
 
 ## Diagrams explain decisions
 
-A diagram earns its place when it makes branching or sequencing clearer than prose.
+A diagram earns its place when branching or sequencing is clearer visually than in prose.
 
 Good candidates:
 
-- one click can take two paths
-- auth changes based on state
+- one interaction can take two paths
+- auth behavior depends on state
 - controller selection changes behavior
-- request retries or falls back
+- requests retry or fall back
 - data moves through a non-obvious sequence
 
 Bad candidates:
 
 - one-line guards
-- flat file changes
 - obvious renames
-- diagrams that repeat the same bullets
+- flat file changes
+- diagrams that repeat the bullets
 
 ## Invariants are review targets
 
-A useful PR note names behavior that should not move.
+Useful PR notes name behavior that should not move.
 
 Examples:
 
@@ -63,7 +65,7 @@ Examples:
 - timeout ownership stays with the caller
 - API response shape is unchanged
 
-This converts hidden regression risk into an explicit review target.
+This turns hidden regression risk into an explicit review target.
 
 ## Factual restraint
 
