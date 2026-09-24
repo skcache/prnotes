@@ -4,7 +4,7 @@ Before/after screenshots are the strongest evidence a visual change can carry, a
 
 ## When captures are required
 
-Capture a before/after pair when the change affects anything a user can see or do:
+Capture a before/after pair when the change affects anything a user can look at:
 
 - layout, spacing, color, typography, component states
 - interaction: click, hover, focus, keyboard, drag
@@ -13,7 +13,17 @@ Capture a before/after pair when the change affects anything a user can see or d
 - auth and sign-in flows
 - anything you would otherwise describe with the word "now shows"
 
-Do not capture for backend-only, refactor-only, docs-only, dependency, generated-code, or internal infrastructure changes. A screenshot of a passing terminal is not visual evidence of a backend change.
+**Rendered output counts.** The question is never "is this a docs change" — it is "can the change be seen". Capture it when the change alters:
+
+- a README, changelog, or any Markdown as it renders
+- a docs site, MDX page, or static site
+- Markdown mechanics: fences, tables, task lists, diagrams, code blocks
+- CSS, themes, typography, spacing tokens
+- a generated page, dashboard, or report
+
+A change whose source file is `.md` is still a visual change if someone looks at the result.
+
+Do not capture for backend-only, refactor-only, dependency, generated-code, or internal infrastructure changes. A screenshot of a passing terminal is not visual evidence of a backend change.
 
 ## Capture sequence
 
@@ -26,6 +36,17 @@ Order matters. The BEFORE image only exists before the code changes.
 5. Capture AFTER.
 
 If this skill is loaded after the change is already in place, recover the old state instead of skipping it: stash the change, check out the base commit, or run the previous build. If none of that is possible, say the BEFORE image is unavailable. Do not draw one, do not describe one as if it existed, and do not reuse an unrelated screenshot.
+
+## Capturing rendered output
+
+Same rule, different mechanism: the renderer is the app.
+
+1. Render the base revision and the branch revision from the same source region.
+2. Use the real product wherever you can — the deployed docs site, the running app, GitHub's own rendering.
+3. If the real renderer cannot be driven — GitHub's client-side diagram enrichment does not run under headless capture, for example — use a renderer that closely reproduces it: GitHub-flavored Markdown plus the product's own stylesheet.
+4. Hold viewport width, theme, and the cropped region identical between the pair. Same origin, same width, same theme; only the content changes.
+
+State the limitation once, plainly, under the images: "Rendered with a GitHub-flavored Markdown renderer; GitHub's own diagram enrichment does not run headless." Passing a reproduction off as the product is not honest.
 
 ## Framing
 
@@ -76,6 +97,10 @@ The local directory stays hidden and untracked. When the note needs hosted URLs,
 ```
 
 If there is no upload path, say where the local files are and let the author attach them. Do not invent a URL.
+
+## Images replace prose
+
+When a capture shows the change, the capture is the explanation. Delete the sentence that describes it. A note that narrates its own evidence takes longer to read than the change deserves.
 
 ## Reporting
 
