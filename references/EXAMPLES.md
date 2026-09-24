@@ -1,6 +1,6 @@
 # Examples
 
-These are shape references, not templates. Every fact in them is invented, including metrics, file names, and test names. Never reuse their numbers, wording, or structure verbatim — match the shape to the actual change or leave it out.
+These are shape references, not templates. Every fact in them is invented, including metrics, file names, and test names. Never reuse their numbers, wording, or structure verbatim. Match the shape to the actual change or leave it out.
 
 ---
 
@@ -54,9 +54,9 @@ flowchart LR
 
 ### Verification
 
-- [x] Auth-required row click starts sign-in — manual run, captured above
-- [x] Direct switch click still toggles enabled state — `toggle.test.ts`
-- [x] Non-auth rows behave as before — existing suite, unchanged
+- [x] Auth-required row click starts sign-in (manual run, captured above)
+- [x] Direct switch click still toggles enabled state (`toggle.test.ts`)
+- [x] Non-auth rows behave as before (existing suite, unchanged)
 
 ---
 
@@ -84,7 +84,7 @@ Benchmark: 100k requests, fixed trace, warm cache, same hardware and build mode.
 ### Verification
 
 - [x] Fixed-trace benchmark repeated on the same workload and hardware.
-- [x] Equivalent query forms resolve to the same key — `normalize-key.test.ts`.
+- [x] Equivalent query forms resolve to the same key (`normalize-key.test.ts`).
 - [x] Existing eviction tests pass.
 
 ---
@@ -107,7 +107,7 @@ The previous implementation duplicated retry limits and backoff selection across
 
 - [x] Existing retry behavior tests pass unchanged.
 - [x] Snapshot coverage confirms the same policy for each previous call site.
-- [ ] Caller-level cancellation — not re-run; no change to that path.
+- [ ] Caller-level cancellation (not re-run, no change to that path)
 
 ---
 
@@ -127,8 +127,8 @@ Adds `orders.settled_at`, backfilled from `payment_events` for existing rows. Ne
 ### Verification
 
 - [x] Migration and rollback run against a production-shaped snapshot.
-- [x] Backfill leaves no rows with a matching event unset — `backfill-settled-at.sql` check query.
-- [ ] Lock duration on the largest table — not measured; expect a brief `ACCESS EXCLUSIVE` during column add.
+- [x] Backfill leaves no rows with a matching event unset (`backfill-settled-at.sql` check query)
+- [ ] Lock duration on the largest table (not measured; expect a brief `ACCESS EXCLUSIVE` during column add)
 
 ---
 
@@ -140,9 +140,9 @@ Moves workspace authorization from per-route checks into a shared policy layer a
 
 Review order:
 
-1. `policy/` — the new layer and the decision function. This is the part that needs thought.
-2. Route diffs — mechanical removal of the old checks. Skim for a route that dropped a check without a policy replacement.
-3. Test moves — relocated, not rewritten.
+1. `policy/`: the new layer and the decision function. This is the part that needs thought.
+2. Route diffs: mechanical removal of the old checks. Skim for a route that dropped a check without a policy replacement.
+3. Test moves: relocated, not rewritten.
 
 ### Implementation
 
@@ -156,4 +156,4 @@ Out of scope: the admin console still uses its own checks.
 
 - [x] Route inventory script confirms every deleted `can*` call has a policy equivalent.
 - [x] Existing authorization suite passes unchanged.
-- [ ] Admin console paths — unchanged by this PR, not covered here.
+- [ ] Admin console paths (unchanged by this PR, not covered here)
