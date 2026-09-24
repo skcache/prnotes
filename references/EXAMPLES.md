@@ -18,7 +18,7 @@ A missing `session` object made `formatUser` throw instead of returning the anon
 
 - [x] `format-user.test.ts` covers the absent-session case.
 
-No evidence section, no diagram. The whole note is five lines.
+No evidence section, no diagram. Three lines of content plus headings.
 
 ---
 
