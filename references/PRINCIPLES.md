@@ -12,6 +12,16 @@ Prefer the smallest set of facts that gives the reviewer a correct mental model.
 
 Test every line: does this reduce the reviewer's uncertainty about this change? If not, delete it.
 
+## The note does not explain itself
+
+Never explain the PR-writing process inside the PR. No commentary on why a section exists, why a checkbox is open, or how the note was assembled. The reviewer is reading the change, not the reasoning behind the write-up.
+
+If a note needs an essay to justify its shape, the shape is wrong. Fix the note, not the explanation.
+
+## Images beat prose
+
+When a capture shows the change, the capture is the explanation. Delete the sentence that describes it.
+
 ## Evidence hierarchy
 
 Prefer, in order:
