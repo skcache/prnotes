@@ -1,16 +1,20 @@
 # PR Notes principles
 
-## The PR description is a review interface
+## A PR description is a review interface
 
 A diff is precise about code and poor at communicating intent. A reviewer still has to work out why the change exists, which path it changes, and what must not move.
 
-PR Notes supplies that context and nothing else. It is not a release note, a changelog, a commit summary, or an architecture document.
+Supply that context and nothing else. This is not a release note, a changelog, a commit summary, or an architecture document.
 
 ## Compression, not narration
 
 Prefer the smallest set of facts that gives the reviewer a correct mental model. One matched before/after pair, one small diagram, and two invariants often carry more than four paragraphs.
 
 Test every line: does this reduce the reviewer's uncertainty about this change? If not, delete it.
+
+## No commentary about the note
+
+Never explain the PR-writing process inside the PR. No notes on why a section exists, why a checkbox is open, or how the note was assembled.
 
 ## Evidence hierarchy
 
@@ -31,7 +35,7 @@ Keep what you saw separate from what you concluded.
 - Observed: a command you ran, a test output, a file you read, an image you captured.
 - Inferred: a conclusion drawn from reading the code.
 
-Inference is allowed and often necessary. Unlabelled inference presented as fact is not.
+Inference is often necessary. Label it.
 
 ## When evidence is missing or weak
 
@@ -39,7 +43,7 @@ Inference is allowed and often necessary. Unlabelled inference presented as fact
 |---|---|
 | Not measured | say "not measured" and describe the change; no delta table |
 | Measured under different conditions | report both runs with their conditions, or omit the comparison |
-| Screenshots predate the change | omit them, or state that they are stale |
+| Screenshots predate the change | omit them, or say they are stale |
 | Tests fail | say which ones fail and why the change still stands; never present a failing suite as verification |
 | CI has not run | write "CI not run" |
 | Coverage is partial | say which paths are covered and which are not |
@@ -57,7 +61,7 @@ Any change to authentication, authorization, sessions, tokens, secrets, uploads,
 - what is newly possible for an actor who could not do it before
 - what is explicitly not covered
 
-Never describe a security change in vague UX terms such as "improves sign-in reliability". Name the check that was added, moved, or removed.
+Never describe a security change as "improves sign-in reliability". Name the check that was added, moved, or removed.
 
 ### Schema and data migrations
 
@@ -65,23 +69,23 @@ State the forward direction, the rollback direction, what happens to existing ro
 
 ### Large multi-subsystem PRs
 
-Give the reviewer a reading order instead of more prose:
+Give the reviewer a reading order:
 
 - what to review first, and why
 - which parts are mechanical (renames, generated output, formatting) and can be skimmed
 - which parts carry the real decision
 - shared invariants stated once, not repeated per file
-- what is deliberately out of scope
+- what is out of scope
 
 At most one diagram per subsystem. Never one diagram spanning unrelated subsystems.
 
 ### Behavior-preserving refactors
 
-State that no behavior change is intended, in the first sentence. Then give the structural problem, the new boundary, the preserved contract, and the evidence for equivalence. Do not fabricate a before/after UX story.
+State in the first sentence that no behavior change is intended. Then give the structural problem, the new boundary, the preserved contract, and the evidence for equivalence.
 
 ### Generated code
 
-Do not narrate generated files. State the generator, what changed in its input, and the command that regenerates the output. Point the reviewer at the hand-written source that produced it.
+Do not narrate generated files. State the generator, what changed in its input, and the command that regenerates the output. Point the reviewer at the hand-written source.
 
 ### Dependency bumps
 
