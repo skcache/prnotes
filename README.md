@@ -25,6 +25,8 @@ The agent reads the actual diff and the available evidence first.
 
 Then it writes the smallest note that makes the change obvious.
 
+Most notes are three sections and under 15 lines.
+
 A tiny fix stays tiny.
 
 A UI change gets matched before / after captures, cropped to the region that moved.
