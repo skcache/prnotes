@@ -93,9 +93,7 @@ Benchmark: 100k requests, fixed trace, warm cache, same hardware and build mode.
 
 ### What changed
 
-Refactors request retry policy construction into a single module. No runtime behavior change is intended.
-
-The previous implementation duplicated retry limits and backoff selection across three call sites. The new module owns policy construction and preserves the existing retry contract.
+Refactors request retry policy construction into a single module; retry limits and backoff selection were duplicated across three call sites. No runtime behavior change is intended.
 
 ### Implementation
 
@@ -119,10 +117,9 @@ Adds `orders.settled_at`, backfilled from `payment_events` for existing rows. Ne
 
 ### Implementation
 
-- Forward: add the nullable column, backfill in batches of 5k, then add the index concurrently.
-- Rollback: drop the column. No data loss beyond the derived value.
-- Safe to run before the code deploy: the column is nullable and unread until the new code is live.
-- Existing rows keep `settled_at` null when no matching payment event exists.
+- Forward: add the nullable column, backfill in batches of 5k, then build the index concurrently.
+- Rollback: drop the column. Only the derived value is lost.
+- Safe before the code deploy: the column is nullable and unread until the new code is live, and rows with no matching event keep `settled_at` null.
 
 ### Verification
 
@@ -136,24 +133,24 @@ Adds `orders.settled_at`, backfilled from `payment_events` for existing rows. Ne
 
 ### What changed
 
-Moves workspace authorization from per-route checks into a shared policy layer and deletes the route-level duplicates. User-visible behavior is intended to be unchanged.
+Moves workspace authorization from per-route checks into a shared policy layer and deletes the duplicates. No behavior change intended.
 
 Review order:
 
-1. `policy/`: the new layer and the decision function. This is the part that needs thought.
-2. Route diffs: mechanical removal of the old checks. Skim for a route that dropped a check without a policy replacement.
+1. `policy/`: the new layer and the decision function. This needs the most attention.
+2. Route diffs: mechanical removal of the old checks.
 3. Test moves: relocated, not rewritten.
 
 ### Implementation
 
-- Every route now resolves permissions through `authorize(user, action, resource)`; the old per-route `can*` helpers are deleted.
-- Deny-by-default: an action with no policy entry is refused, matching the previous behavior for unlisted routes.
-- Shared invariants: workspace scoping is still resolved from the session, never from request input.
+- Every route resolves permissions through `authorize(user, action, resource)`. The `can*` helpers are gone.
+- Deny by default: an unlisted action is refused, matching the old behavior.
+- Workspace scoping still comes from the session, never from request input.
 
-Out of scope: the admin console still uses its own checks.
+Out of scope: the admin console keeps its own checks.
 
 ### Verification
 
-- [x] Route inventory script confirms every deleted `can*` call has a policy equivalent.
+- [x] Every deleted `can*` call has a policy equivalent (`check-route-inventory.ts`).
 - [x] Existing authorization suite passes unchanged.
-- [ ] Admin console paths (unchanged by this PR, not covered here)
+- [ ] Admin console paths (unchanged, not covered)
