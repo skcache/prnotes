@@ -23,6 +23,9 @@ These are the ways a PR note goes wrong. Each one is a scoring failure.
 | Meta-commentary | the note explaining its own structure, or a PR comment explaining how the note was written |
 | Forensic report | documenting the investigation instead of the change |
 | Prose over pixels | a paragraph describing a visual difference that a capture would settle in one look |
+| Restating the diff | a sentence the code already says, or the same fact twice, once in prose and once in a bullet |
+| Cap breach | a fourth implementation bullet, a second diagram, a 40-line note on a small change |
+| Diagram formality | a `### Flow` section with no diagram, or a line explaining why there is no diagram |
 
 ## Cases
 
@@ -66,9 +69,10 @@ Expect:
 - classified as **visually observable**, not "docs-only"
 - before/after captures of the rendered region, same width and theme, cropped tight
 - a one-to-two sentence behavior delta
-- at most two implementation bullets
-- at most three short verification bullets
-- the whole body scannable in under 15 seconds
+- three implementation bullets or fewer
+- three verification lines or fewer
+- under 15 lines total
+- no diagram, and no mention of there being no diagram
 - no table about markdown mechanics
 - no self-referential comment explaining how the note was written
 - no "docs-only means no screenshot" reasoning anywhere
@@ -88,4 +92,4 @@ Score 0-2 on:
 7. factual restraint
 8. conciseness
 
-Maximum: **16**. A fabricated fact caps the total at 8. A note a reviewer cannot scan in 15 seconds caps it at 10.
+Maximum: **16**. A fabricated fact caps the total at 8. Exceeding any hard cap, or a note a reviewer cannot scan in 15 seconds, caps it at 10.
