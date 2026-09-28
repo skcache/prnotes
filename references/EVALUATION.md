@@ -26,6 +26,7 @@ These are the ways a PR note goes wrong. Each one is a scoring failure.
 | Restating the diff | a sentence the code already says, or the same fact twice, once in prose and once in a bullet |
 | Cap breach | a fourth implementation bullet, a second diagram, a 40-line note on a small change |
 | Diagram formality | a `### Flow` section with no diagram, or a line explaining why there is no diagram |
+| Em dashes | the note using them where a colon, a period, or parentheses would do |
 
 ## Cases
 
