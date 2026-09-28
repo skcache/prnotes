@@ -233,6 +233,7 @@ Delete on sight:
 - connectors: Additionally, Furthermore, Moreover, Notably
 - triads: "fast, simple, and reliable"
 - closers: "In short", "Overall", "With this change"
+- em dashes. Use a colon, a period, or parentheses.
 - the same fact twice, once in prose and once in a bullet
 - any sentence the diff already says
 
