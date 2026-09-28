@@ -13,7 +13,7 @@ compatibility: >-
   before/after visual evidence additionally needs the ability to run the
   changed app and crop images.
 metadata:
-  version: "0.2.0"
+  version: "0.3.0"
 ---
 
 # pr-notes
@@ -57,15 +57,15 @@ EVIDENCE AVAILABLE
 
 ## 2. Lead with the behavior delta
 
-One to three sentences of observable behavior, before any implementation detail.
+Two sentences maximum. Then stop.
 
-> Keys written and read within the same tick missed the cache and returned `undefined`. Same-tick reads now return the written value.
+> Two concurrent retries could both execute. `claim(key)` now takes the key with a conditional insert, and the loser returns the winner's result.
 
 Weak:
 
-> Updates `cache.ts` to fix a bug in the lookup path.
+> Updates `claim.ts` to fix a race in the idempotency path.
 
-If there is no user-visible behavior delta, say that in the first sentence and name the class: refactor, dependency, docs, generated code, internal infrastructure.
+If there is no user-visible behavior delta, say that in one sentence and name the class: refactor, dependency, docs, generated code, internal infrastructure.
 
 Cut vague language: improves UX, fixes logic, handles edge cases, more robust, refactors behavior. Use the exact state transition, request path, metric, or invariant.
 
@@ -73,7 +73,7 @@ Cut vague language: improves UX, fixes logic, handles edge cases, more robust, r
 
 ## 3. Evidence
 
-Evidence counts only when it is real, current, and comparable.
+Evidence counts only when it is real, current, and comparable. Most notes need none.
 
 ### Visual changes
 
@@ -89,7 +89,7 @@ Capture order:
 4. reproduce the identical scenario
 5. capture AFTER
 
-Hold viewport, zoom, theme, and app state constant between the pair, then crop to the region that changed. A 40px state change does not need a full-page shot. Put the pair side by side in the note.
+Hold viewport, zoom, theme, and app state constant between the pair, then crop to the region that changed. Put the pair side by side in the note.
 
 Store captures under `.pr-notes/screenshots/` as `before-<short-name>.png` and `after-<short-name>.png`, and add the exact root entry `/.pr-notes/` to `.gitignore` unless the user wants the images committed. Local copies stay untracked. Attach or upload the selected images through the normal PR workflow when the note needs hosted URLs.
 
@@ -113,9 +113,11 @@ Never use screenshots, logs, or metrics that predate the change as if they were 
 
 ---
 
-## 4. Add a diagram only when prose would be slower
+## 4. Diagrams
 
-Draw one when the changed path has a decision point or sequence that is hard to hold in your head from prose.
+Most notes have no diagram. That is the normal case, not a gap.
+
+Draw one only when the changed path has a branch or sequence that is hard to hold in your head from prose.
 
 ```mermaid
 flowchart LR
@@ -135,39 +137,36 @@ Show the decision that matters, not the file layout.
 
 ## 5. Implementation details: only what a reviewer must verify
 
-Each bullet has to pass one test: would a reviewer be unable to confirm this change is correct without this line?
+Three bullets maximum. Most changes need two.
 
-Keep mechanisms, boundaries, and invariants. Delete narration.
+Each bullet has to pass one test: would a reviewer be unable to confirm this change is correct without this line?
 
 Strong:
 
 - `needs_auth` rows stay enabled and disconnected until authentication completes.
 - The write and the index update happen in one transaction, so a reader cannot see the row without its index entry.
-- The canonical key is computed before lookup, so invalidation still operates on one representation.
 
 Weak: "Updated the click handler." / "Refactored the hook." / "Changed types." / a list of touched files.
 
-Use exact function, state, or service names only when they make the diff easier to inspect.
+Never explain the surrounding system. If the change needs architecture context to review, link the doc. Do not restate it.
 
 ---
 
-## 6. State preserved behavior
+## 6. Preserved behavior
 
-Name the adjacent paths a reviewer should spot-check:
+At most three invariants. If you cannot rank them, the change is too broad for one note.
 
 - Direct switch clicks still toggle enabled state.
 - Keyboard activation is unchanged.
-- Non-auth rows behave as before.
 - Existing API response shape is unchanged.
-- Failure handling stays on the previous path.
 
-This is the regression checklist. Keep it to invariants that could plausibly break.
+This is the regression checklist.
 
 ---
 
 ## 7. Verification must prove the changed path
 
-Each line names a path and the evidence behind it.
+Three lines maximum. Each line names a path and the evidence behind it.
 
 ```md
 - [x] Auth-required row click starts sign-in (manual run, captured above)
@@ -183,56 +182,73 @@ Each line names a path and the evidence behind it.
 
 ---
 
-## 8. Pick the smallest shape
+## 8. Shape and length
 
-Headings are a default, not a contract. Use only what reduces reviewer uncertainty, and rename or drop them as the change requires.
+Write for a reviewer who is skimming. Most notes are three sections and under 15 lines.
 
-Default shape: `## What changed`, then `### Before / after` (only with real evidence), `### Flow` (only if a diagram helps), `### Implementation`, `### Verification`. Everything after the first section is optional.
+This is the default, and usually the whole note:
+
+```md
+## What changed
+### Implementation
+### Verification
+```
+
+Add a section only when it applies: `### Before / after` with real evidence, `### Flow` with a diagram, `### Preserved` when a real invariant could break.
 
 | Change | Add beyond "what changed" |
 |---|---|
-| Tiny fix / null guard | the exact condition and the path that no longer reaches it. No diagram. If you ran the before and after, add the result. |
-| UI / interaction / rendered output | before/after captures, or an explicit statement that they are unavailable |
-| Auth / event routing / state machine | the decision point; a diagram when there are two real paths |
-| Backend / performance / cache / systems | measured delta with conditions, or "not measured"; the invariant that makes it correct (ordering, keying, eviction, ownership); unchanged failure semantics |
-| Behavior-preserving refactor | the structural problem removed, the new boundary, the preserved contract, equivalence evidence |
-| Schema or data migration | forward and rollback direction, what happens to existing rows, whether it is safe to run before or after the code deploy |
-| Dependency bump / generated code | version and reason, or generator, changed input, and regenerate command. Do not narrate generated lines. |
-| Docs or prose, text only | what a reader now learns. No diagram. If the file is rendered anywhere (README, docs site, MDX, HTML), use the rendered-output row above. |
-| Security-sensitive | the trust boundary that moved, what is newly possible, what is explicitly not covered |
-| Large multi-subsystem | review order, what is mechanical vs what needs thought, shared invariants stated once, what is out of scope |
+| Tiny fix / null guard | the exact condition and the path that no longer reaches it |
+| UI / interaction / rendered output | before/after captures, or a statement that they are unavailable |
+| Auth / event routing / state machine | the decision point |
+| Backend / performance / cache / systems | measured delta with conditions, or "not measured"; the invariant that makes it correct |
+| Behavior-preserving refactor | the structural problem removed, the new boundary, equivalence evidence |
+| Schema or data migration | forward and rollback direction, existing rows, safe before or after the deploy |
+| Dependency bump / generated code | version and reason, or generator, input, and regenerate command |
+| Docs or prose, text only | what a reader now learns. If the file is rendered, use the row above. |
+| Security-sensitive | the trust boundary that moved, what is newly possible, what is not covered |
+| Large multi-subsystem | review order in at most three lines; what is mechanical, what is out of scope |
 
-Do not hide an unreviewable diff behind a generic summary. Do not pad a small change into a large note.
+Hard caps:
+
+- 2 sentences in `## What changed`
+- 3 implementation bullets
+- 3 verification lines
+- 1 diagram, or none
+- 15 lines total. A tiny fix is 3 to 5.
+
+If a cap does not hold, the note is describing two changes. Split the PR, or say in one line what is out of scope.
 
 ---
 
-## 9. Style and budget
+## 9. Tone
 
-A reviewer should understand the note in under 15 seconds.
+Short declarative sentences. Name the thing, not the change to the thing. Use the code's own terms.
 
-- concise, technical, literal
-- short paragraphs, no section that exists only to look complete
-- exact terminology from the code, not synonyms
-- no marketing language, no closing summary, no filler such as "This PR aims to..."
-- no commit-by-commit narration, no file-by-file walkthrough
-- no commentary about the note itself. Never explain why a section is present, why a checkbox is open, or how the note was assembled.
-- if an image shows the change, delete the sentence that describes it
+Delete on sight:
 
-Typical note: 5 to 20 lines of content. A tiny fix is 3 to 5. A large multi-subsystem PR earns more, but only as review order and invariants. If the note takes longer to read than the diff, cut it.
+- sentences that restate the diff
+- purpose and framing openers: "The goal here is", "This ensures that", "In order to"
+- hedges: typically, generally, essentially, it is worth noting
+- connectors: Additionally, Furthermore, Moreover, Notably
+- triads: "fast, simple, and reliable"
+- closers: "In short", "Overall", "With this change"
+- the same fact twice, once in prose and once in a bullet
+- any sentence the diff already says
 
 ---
 
 ## 10. Final check
 
 ```text
-BEHAVIOR DELTA CLEAR?
+BEHAVIOR DELTA IN TWO SENTENCES OR LESS?
 EVIDENCE REAL, CURRENT, COMPARABLE?
 VISUAL CHANGE HAS CAPTURES OR AN HONEST "UNAVAILABLE"?
-IS THE DIAGRAM USEFUL?
-IMPLEMENTATION BULLETS REVIEW-RELEVANT?
-PRESERVED BEHAVIOR EXPLICIT?
+DIAGRAM PRESENT ONLY IF IT HELPS?
+IMPLEMENTATION BULLETS THREE OR FEWER?
 VERIFICATION NAMES A PATH AND ITS EVIDENCE?
-READABLE IN 15 SECONDS?
+UNDER 15 LINES?
+NO LINE THAT RESTATES THE DIFF?
 ANY COMMENTARY ABOUT THE NOTE ITSELF?
 ANYTHING UNSUPPORTED OR UNNEEDED LEFT?
 ```
